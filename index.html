@@ -101,19 +101,71 @@
     opacity:0;transition:opacity .25s;user-select:none;}
   .ch-bug.show{opacity:1}
 
-  /* TV GUIDE overlay */
-  .guide{position:absolute;inset:0;z-index:10;background:rgba(8,4,20,.94);
-    display:flex;flex-direction:column;padding:14px 16px;opacity:0;pointer-events:none;transition:opacity .25s;}
+  /* ===== TV GUIDE — classic cable-listings grid ===== */
+  .guide{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#0a1e5e 0%,#071444 100%);color:#eaf0ff;
+    font-family:'VT323',monospace;opacity:0;pointer-events:none;transition:opacity .25s;
+    --gch-w:132px;--grow-h:48px;}
   .guide.open{opacity:1;pointer-events:auto}
-  .guide h2{font-family:'Bungee',sans-serif;color:var(--sherbet);font-size:1.1rem;margin-bottom:.4rem;flex:0 0 auto}
-  .guide .rows{overflow-y:auto;flex:1 1 auto;scrollbar-width:thin}
-  .guide-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;font-size:1.15rem;
-    cursor:pointer;border:1px solid transparent;line-height:1.1}
-  .guide-row:hover{background:rgba(255,255,255,.06)}
-  .guide-row.live{border-color:var(--aqua);background:rgba(63,240,200,.08)}
-  .guide-row .gch{color:var(--aqua);min-width:2.4em}
-  .guide-row .gtt{color:var(--static);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .guide-row .gnow{color:#ff3b3b;font-size:.8em;letter-spacing:.1em}
+  /* top bar */
+  .gbar{display:flex;align-items:center;gap:14px;padding:9px 16px;flex:0 0 auto;
+    background:linear-gradient(180deg,#14328f,#0a1e5e);border-bottom:2px solid #2a4bb0}
+  .gbrand{font-family:'Bungee',sans-serif;font-size:1.5rem;line-height:1;letter-spacing:.02em}
+  .gbrand .sat{color:var(--tang)} .gbrand .box{color:var(--aqua)}
+  .gbar-mid{margin-left:auto;font-size:1.3rem;color:#cfe0ff;letter-spacing:.04em}
+  .gbar-mid b{color:#fff;margin-left:.3em} .gmail{color:#8fb4ff}
+  .gbadge{background:#e11d1d;color:#fff;font-family:'Bungee',sans-serif;font-size:.8rem;
+    line-height:.9;padding:6px 9px;border-radius:5px;text-align:center;box-shadow:0 2px 0 #7a0e0e}
+  .gbadge span{display:block;font-size:1.15rem}
+  /* preview banner */
+  .gpreview{display:flex;gap:16px;padding:14px 16px;flex:0 0 auto;min-height:120px;
+    background:linear-gradient(180deg,rgba(70,120,230,.38),rgba(20,50,140,.12));border-bottom:2px solid #2a4bb0}
+  .gp-info{flex:1;min-width:0}
+  .gp-titlerow{display:flex;align-items:baseline;gap:12px}
+  .gp-title{font-size:2.1rem;color:#ffe14d;font-weight:bold;line-height:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gp-chan{margin-left:auto;font-size:1.4rem;color:#cfe0ff;white-space:nowrap}
+  .gp-time{font-size:1.5rem;color:#fff;margin:.15em 0 .35em}
+  .gp-desc{font-size:1.35rem;color:#dfe8ff;line-height:1.15;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .gp-art{flex:0 0 200px;border-radius:8px;overflow:hidden;position:relative;
+    background:radial-gradient(circle at 50% 38%,#3a6bd0,#0a1e5e);display:grid;place-items:center;
+    box-shadow:inset 0 0 30px rgba(0,0,0,.55)}
+  .gp-art span{font-family:'Bungee',sans-serif;font-size:3rem;color:rgba(255,255,255,.9);text-shadow:0 2px 8px #000}
+  .gp-art::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.18) 3px 4px)}
+  /* time header */
+  .gtimes{display:flex;align-items:stretch;height:34px;flex:0 0 auto;font-size:1.3rem;
+    background:#061238;border-bottom:1px solid #2a4bb0}
+  .gtoday{width:var(--gch-w);flex:0 0 var(--gch-w);display:flex;align-items:center;gap:8px;padding-left:6px;
+    color:#bcd0ff;letter-spacing:.08em;border-right:1px solid #2a4bb0;overflow:hidden;white-space:nowrap}
+  .gslots{flex:1;display:grid}
+  .gslot{display:flex;align-items:center;padding-left:10px;color:#fff;border-left:1px solid #2a4bb0}
+  .gnav{background:#123089;color:#fff;border:none;width:32px;cursor:pointer;font-size:.9rem;flex:0 0 auto}
+  .gnav:hover{background:#1c46bf}
+  /* grid */
+  .ggrid{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+  .grow{display:flex;align-items:stretch;height:var(--grow-h);border-bottom:1px solid #163a86}
+  .gcell{width:var(--gch-w);flex:0 0 var(--gch-w);display:flex;flex-direction:column;justify-content:center;
+    padding:0 10px;background:linear-gradient(180deg,#bcd4ff,#8fb0f0);color:#0a1e5e;
+    border-right:1px solid #2a4bb0;cursor:pointer}
+  .gcell.sel{background:linear-gradient(180deg,#ffe98a,#ffcf3f)}
+  .gcell .gc-num{font-size:1.35rem;font-weight:bold;line-height:1}
+  .gcell .gc-net{font-size:1rem;opacity:.8;line-height:1.1}
+  .glane{flex:1;position:relative;overflow:hidden;background:#0a1e5e}
+  .gprog{position:absolute;top:3px;bottom:3px;border-radius:5px;padding:0 10px;display:flex;align-items:center;
+    color:#fff;font-size:1.25rem;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    border:1px solid rgba(255,255,255,.16)}
+  .gprog:hover{filter:brightness(1.14)}
+  .gprog.sel{outline:3px solid #ffe14d;outline-offset:-3px;z-index:3;color:#241a00;
+    background:linear-gradient(180deg,#ffe98a,#ffcf3f)!important}
+  .gprog.live::before{content:"●";color:#ff5a5a;margin-right:.35em;font-size:.8em}
+  .gnowline{position:absolute;top:0;bottom:0;width:2px;background:#ff5a5a;z-index:4;pointer-events:none;
+    box-shadow:0 0 6px #ff5a5a}
+  /* footer help */
+  .gfoot{flex:0 0 auto;display:flex;gap:18px;justify-content:center;padding:8px;font-size:1.1rem;color:#9fb6ee;
+    background:#061238;border-top:1px solid #2a4bb0}
+  .gfoot b{color:var(--aqua)}
 
   /* control rail (right of screen) */
   .rail{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:12px;
@@ -191,9 +243,19 @@
     input[type=range]{width:62vw;max-width:260px;height:12px}
     input[type=range]::-webkit-slider-thumb{width:24px;height:24px}
     input[type=range]::-moz-range-thumb{width:24px;height:24px}
-    .guide-row{padding:10px 8px;font-size:1.25rem}
     .now-bar{font-size:1.15rem}
     .hint{display:none}            /* keyboard shortcuts irrelevant on touch */
+    /* guide: tighter columns + hide the keyboard help footer on touch */
+    .guide{--gch-w:74px;--grow-h:46px}
+    .gbrand{font-size:1.05rem} .gbar-mid{display:none} .gbadge{font-size:.65rem}
+    .gpreview{gap:10px;padding:10px 12px;min-height:96px}
+    .gp-title{font-size:1.45rem} .gp-time{font-size:1.2rem}
+    .gp-desc{font-size:1.1rem;-webkit-line-clamp:2} .gp-chan{font-size:1.1rem}
+    .gp-art{flex-basis:88px} .gp-art span{font-size:1.7rem}
+    .gtimes{font-size:1.1rem} .gcell .gc-num{font-size:1.15rem} .gcell .gc-net{font-size:.85rem}
+    .gtoday-lbl{display:none}   /* just the ◀ arrow fits on phones */
+    .gprog{font-size:1.1rem;padding:0 7px}
+    .gfoot{display:none}
   }
   /* don't let iOS double-tap-zoom fight the controls */
   .pbtn,.knob,.guide-row,input[type=range],.vol-wrap,.screen{touch-action:manipulation}
@@ -219,11 +281,6 @@
           <div class="feed" id="feed">
             <div class="show-title">SATURDAYBOX</div>
             <div class="show-sub" id="bootMsg">press POWER to tune in…</div>
-          </div>
-
-          <div class="guide" id="guide">
-            <h2>&#9656; TV GUIDE</h2>
-            <div class="rows" id="guideRows"></div>
           </div>
 
           <div class="scan"></div>
@@ -275,6 +332,40 @@
   </div>
 </div>
 
+<!-- ===== TV GUIDE (classic cable grid) ===== -->
+<div class="guide" id="guide" aria-hidden="true">
+  <div class="gbar">
+    <div class="gbrand"><span class="sat">SATURDAY</span><span class="box">BOX</span></div>
+    <div class="gbar-mid"><span class="gmail">&#9993;</span> TV Listings <b id="gClock">--:--</b></div>
+    <div class="gbadge">TV<span>GUIDE</span></div>
+  </div>
+
+  <div class="gpreview">
+    <div class="gp-info">
+      <div class="gp-titlerow">
+        <span class="gp-title" id="gpTitle">&mdash;</span>
+        <span class="gp-chan" id="gpChan">CH &mdash;</span>
+      </div>
+      <div class="gp-time" id="gpTime"></div>
+      <div class="gp-desc" id="gpDesc"></div>
+    </div>
+    <div class="gp-art"><span id="gpArtCh">02</span></div>
+  </div>
+
+  <div class="gtimes">
+    <div class="gtoday"><button class="gnav" id="gPrevTime" aria-label="Earlier">&#9664;</button><span class="gtoday-lbl">TODAY</span></div>
+    <div class="gslots" id="gSlots"></div>
+    <button class="gnav" id="gNextTime" aria-label="Later">&#9654;</button>
+  </div>
+
+  <div class="ggrid" id="gGrid"></div>
+
+  <div class="gfoot">
+    <span><b>&uarr;&darr;</b> channel</span><span><b>&larr;&rarr;</b> time</span>
+    <span><b>ENTER</b> watch</span><span><b>G</b>/<b>ESC</b> close</span>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -296,7 +387,7 @@ const DEMO_IF_NO_BUCKET = true; // falls back to demo only if the bucket/manifes
 const $ = id => document.getElementById(id);
 const player=$('player'), feed=$('feed'), bootMsg=$('bootMsg'), nowTitle=$('nowTitle'),
       nextTitle=$('nextTitle'), chNum=$('chNum'), chBug=$('chBug'), screenEl=$('screen'),
-      staticCv=$('static'), flash=$('flash'), guide=$('guide'), guideRows=$('guideRows'),
+      staticCv=$('static'), flash=$('flash'), guide=$('guide'),
       progBar=$('progBar'), toast=$('toast'), vol=$('vol'), volIco=$('volIco'),
       powerBtn=$('power');
 
@@ -446,29 +537,132 @@ function applyVolume(v){
 vol.addEventListener('input',e=>{ const v=+e.target.value; if(v>0)lastVol=v; applyVolume(v); if(powered)player.play().catch(()=>{}); });
 volIco.addEventListener('click',()=> applyVolume(player.muted||+vol.value===0 ? lastVol : 0));
 
-/* ---------- TV guide ---------- */
-function renderGuide(){
-  guideRows.innerHTML="";
-  channels.forEach((ch,i)=>{
-    const slot=currentSlot(ch);
-    const row=document.createElement('div');
-    row.className="guide-row"+(i===chIndex?" live":"");
-    row.innerHTML=`<span class="gch">CH ${ch.id}</span>
-      <span class="gtt">${slot?slot.item.title:'—'}</span>
-      ${i===chIndex?'<span class="gnow">● LIVE</span>':''}`;
-    row.addEventListener('click',()=>{
-      const dir = i>chIndex?1:-1, steps=Math.abs(i-chIndex);
-      if(steps===0){toggleGuide(false);return;}
-      chIndex=i-dir; changeChannel(dir);
-      toggleGuide(false);
-    });
-    guideRows.appendChild(row);
-  });
+/* ---------- tune to an arbitrary channel index (with static/flash) ---------- */
+function tuneToChannel(i){
+  if(channels.length===0) return;
+  i=(i+channels.length)%channels.length;
+  if(i===chIndex){ return; }
+  chIndex=i;
+  const ch=channels[chIndex];
+  chNum.textContent=ch.id; chBug.textContent=ch.id; chBug.classList.add('show');
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+  startStatic(); showToast("CH "+ch.id);
+  clearTimeout(tuneToChannel._t);
+  tuneToChannel._t=setTimeout(()=>{
+    tuneIn(true); setTimeout(()=>chBug.classList.remove('show'),900);
+  }, reduceMotion?100:420);
 }
+
+/* ============================================================
+   TV GUIDE — classic cable-listings grid, driven by the broadcast clock
+   ============================================================ */
+const SLOT=1800;                      // 30-minute columns
+let guideWinOffset=0;                  // how many slots ahead of "now" the window starts
+let selCh=0, selTime=0;                // grid cursor (channel row + timestamp)
+
+const PCOLORS=['#1f57c4','#1a7a3a','#6a2fb0','#0f6d86','#b03a6a','#243f9e','#8a5a12'];
+function progColor(t){ let h=0; for(const c of t) h=(h*31+c.charCodeAt(0))>>>0; return PCOLORS[h%PCOLORS.length]; }
+function netOf(ch){ return (ch.items[0] && ch.items[0].net) || "TOON"; }
+function slotsVisible(){ return matchMedia('(max-width:560px)').matches ? 2 : 3; }
+function guideBase(){ return Math.floor(clockSeconds()/SLOT)*SLOT; }
+
+function fmtTime(ts){
+  const d=new Date(ts*1000); let h=d.getHours(); const m=d.getMinutes();
+  const ap=h>=12?'p':'a'; h=h%12||12;
+  return h+':'+String(m).padStart(2,'0')+ap;
+}
+/* which program instance is airing on ch at absolute time t (with its real start/end) */
+function programAt(ch,t){
+  const T=ch.total; if(!T) return null;
+  let off=((t%T)+T)%T, acc=0, idx=0;
+  for(let i=0;i<ch.items.length;i++){ const d=Number(ch.items[i].duration)||0;
+    if(off<acc+d){ idx=i; break; } acc+=d; }
+  const start=t-(off-acc), it=ch.items[idx];
+  return {item:it, start, end:start+(Number(it.duration)||0), idx};
+}
+function programsInWindow(ch,startT,endT){
+  const out=[]; const p=programAt(ch,startT); if(!p) return out;
+  let i=p.idx, t=p.start, guard=0;
+  while(t<endT && guard++<400){
+    const it=ch.items[i%ch.items.length]; const d=Number(it.duration)||0;
+    out.push({item:it, start:t, end:t+d}); t+=d; i++;
+  }
+  return out;
+}
+
+function renderGuide(){
+  if(!channels.length) return;
+  const now=clockSeconds(), SL=slotsVisible();
+  const winStart=guideBase()+guideWinOffset*SLOT, winLen=SL*SLOT, winEnd=winStart+winLen;
+
+  // keep the cursor inside the window
+  if(selCh>=channels.length) selCh=channels.length-1; if(selCh<0) selCh=0;
+  if(selTime<winStart) selTime=winStart; if(selTime>=winEnd) selTime=winEnd-1;
+
+  $('gClock').textContent=fmtTime(now);
+
+  // time-slot header (aligned to the program lanes)
+  const slotsEl=$('gSlots'); slotsEl.style.gridTemplateColumns=`repeat(${SL},1fr)`;
+  slotsEl.innerHTML='';
+  for(let k=0;k<SL;k++){ const d=document.createElement('div'); d.className='gslot';
+    d.textContent=fmtTime(winStart+k*SLOT); slotsEl.appendChild(d); }
+
+  // channel rows
+  const grid=$('gGrid'); grid.innerHTML='';
+  channels.forEach((ch,ci)=>{
+    const row=document.createElement('div'); row.className='grow';
+    const cell=document.createElement('div'); cell.className='gcell'+(ci===selCh?' sel':'');
+    cell.innerHTML=`<span class="gc-num">${ch.id}</span><span class="gc-net">${netOf(ch)}</span>`;
+    cell.onclick=()=>{ selCh=ci; selTime=Math.max(winStart,Math.min(winEnd-1,now)); renderGuide(); };
+
+    const lane=document.createElement('div'); lane.className='glane';
+    programsInWindow(ch,winStart,winEnd).forEach(p=>{
+      const left=Math.max(0,(p.start-winStart)/winLen*100);
+      const right=Math.min(100,(p.end-winStart)/winLen*100);
+      if(right<=left) return;
+      const live = now>=p.start && now<p.end;
+      const sel  = ci===selCh && selTime>=p.start && selTime<p.end;
+      const b=document.createElement('div');
+      b.className='gprog'+(live?' live':'')+(sel?' sel':'');
+      b.style.left=left+'%'; b.style.width=(right-left)+'%';
+      if(!sel) b.style.background=progColor(p.item.title);
+      b.textContent=p.item.title; b.title=p.item.title;
+      b.onclick=()=>{ selCh=ci; selTime=p.start; tuneToChannel(ci); toggleGuide(false); };
+      lane.appendChild(b);
+    });
+    if(now>=winStart && now<winEnd){ const nl=document.createElement('div'); nl.className='gnowline';
+      nl.style.left=((now-winStart)/winLen*100)+'%'; lane.appendChild(nl); }
+
+    row.appendChild(cell); row.appendChild(lane); grid.appendChild(row);
+  });
+
+  // preview banner reflects the cursor
+  const ch=channels[selCh], sp=programAt(ch,selTime);
+  $('gpTitle').textContent = sp ? sp.item.title : '—';
+  $('gpChan').textContent  = `${ch.id} ${netOf(ch)}`;
+  $('gpTime').textContent  = sp ? `${fmtTime(sp.start)}-${fmtTime(sp.end)}` : '';
+  $('gpDesc').textContent  = sp ? (sp.item.desc || `${sp.item.title} — nonstop cartoons on SATURDAYBOX.`) : '';
+  $('gpArtCh').textContent = ch.id;
+}
+
+function guideNav(key){
+  const SL=slotsVisible();
+  if(key==='ArrowUp')        selCh=(selCh-1+channels.length)%channels.length;
+  else if(key==='ArrowDown') selCh=(selCh+1)%channels.length;
+  else if(key==='ArrowLeft'){ selTime-=SLOT; if(selTime<guideBase()+guideWinOffset*SLOT) guideWinOffset=Math.max(0,guideWinOffset-1); }
+  else if(key==='ArrowRight'){ selTime+=SLOT; if(selTime>=guideBase()+(guideWinOffset+SL)*SLOT) guideWinOffset++; }
+  renderGuide();
+}
+
 function toggleGuide(force){
-  const open = force!==undefined?force:!guide.classList.contains('open');
-  if(open){ if(!powered) return; renderGuide(); }
+  const open = force!==undefined ? force : !guide.classList.contains('open');
+  if(open){
+    if(!powered) return;
+    selCh=chIndex; selTime=clockSeconds(); guideWinOffset=0;
+    renderGuide();
+  }
   guide.classList.toggle('open',open);
+  guide.setAttribute('aria-hidden', open?'false':'true');
 }
 
 /* ---------- drift correction + HUD tick ---------- */
@@ -502,6 +696,8 @@ $('prevCh').addEventListener('click',()=>changeChannel(-1));
 $('knobCh').addEventListener('click',()=>changeChannel(1));
 $('guideBtn').addEventListener('click',()=>toggleGuide());
 $('knobGuide').addEventListener('click',()=>toggleGuide());
+$('gPrevTime').addEventListener('click',()=>{ guideWinOffset=Math.max(0,guideWinOffset-1); selTime-=SLOT; renderGuide(); });
+$('gNextTime').addEventListener('click',()=>{ guideWinOffset++; selTime+=SLOT; renderGuide(); });
 $('fs').addEventListener('click',toggleFs);
 screenEl.addEventListener('dblclick',toggleFs);
 
@@ -515,6 +711,13 @@ function toggleFs(){
 
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT') return;
+  // While the guide is open, arrows/Enter drive the grid instead of the TV.
+  if(guide.classList.contains('open')){
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); guideNav(e.key); return; }
+    if(e.key==='Enter'){ tuneToChannel(selCh); toggleGuide(false); return; }
+    if(e.key==='g'||e.key==='G'||e.key==='Escape'){ toggleGuide(false); return; }
+    return;
+  }
   switch(e.key){
     case 'p':case 'P': setPower(!powered); break;
     case 'ArrowRight': changeChannel(1); break;
@@ -533,12 +736,12 @@ function demoSchedule(){
   // Tiny public-domain sample clips so the box visibly "plays" with no bucket.
   const SAMP="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/";
   return [
-    {title:"Morning Toons",   channel:"02", duration:60, url:SAMP+"ForBiggerJoyrides.mp4"},
-    {title:"Robo Rangers",    channel:"02", duration:60, url:SAMP+"ForBiggerEscapes.mp4"},
-    {title:"Critter Cafe",    channel:"05", duration:60, url:SAMP+"ForBiggerFun.mp4"},
-    {title:"Galaxy Patrol",   channel:"05", duration:60, url:SAMP+"ForBiggerBlazes.mp4"},
-    {title:"Sunday Funnies",  channel:"08", duration:15, url:SAMP+"ForBiggerMeltdowns.mp4"},
-    {title:"Late Late Toons", channel:"08", duration:594, url:SAMP+"BigBuckBunny.mp4"},
+    {title:"Morning Toons",   channel:"02", net:"TOON", duration:60,  url:SAMP+"ForBiggerJoyrides.mp4", desc:"Wall-to-wall cartoons to kick off your Saturday."},
+    {title:"Robo Rangers",    channel:"02", net:"TOON", duration:60,  url:SAMP+"ForBiggerEscapes.mp4",  desc:"Five teens, five mecha, one very bad week for the villains."},
+    {title:"Critter Cafe",    channel:"05", net:"NIK",  duration:60,  url:SAMP+"ForBiggerFun.mp4",      desc:"A cozy diner run entirely by talking animals."},
+    {title:"Galaxy Patrol",   channel:"05", net:"NIK",  duration:60,  url:SAMP+"ForBiggerBlazes.mp4",   desc:"Space cadets keep the peace across nine wobbly moons."},
+    {title:"Sunday Funnies",  channel:"08", net:"KIDS", duration:15,  url:SAMP+"ForBiggerMeltdowns.mp4",desc:"The comic pages come to life in short bursts."},
+    {title:"Late Late Toons", channel:"08", net:"KIDS", duration:594, url:SAMP+"BigBuckBunny.mp4",      desc:"A big, gentle rabbit outwits three rowdy rodents."},
   ];
 }
 
