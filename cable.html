@@ -191,6 +191,33 @@
   .modal h3{color:var(--yellow);font-weight:normal;font-size:1.6rem;margin-bottom:8px}
   .modal p{font-size:1.15rem;margin-bottom:10px;color:#dbe3ff}
 
+  /* ================= UX polish ================= */
+  :focus{outline:none}
+  :focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+  .row:focus-visible{outline-offset:-2px}
+  .topbar{position:sticky;top:0;z-index:20;padding-top:max(6px,env(safe-area-inset-top));
+    padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .foot{padding-bottom:max(6px,env(safe-area-inset-bottom))}
+  .splash{padding-top:max(22px,env(safe-area-inset-top))}
+  .press .touch{display:none}
+  @media (hover:none) and (pointer:coarse){ .press .key{display:none} .press .touch{display:inline} }
+  /* on-screen display (channel number / digit entry) */
+  .osd{position:absolute;top:10px;left:12px;z-index:6;pointer-events:none;opacity:0;transition:opacity .25s;
+    font-size:clamp(2rem,6vw,3.2rem);line-height:.9;color:var(--aqua);text-shadow:2px 2px 0 #000,0 0 10px rgba(63,240,200,.5)}
+  .osd small{display:block;font-size:.45em;color:#fff;letter-spacing:.08em}
+  .osd.show{opacity:1}
+  /* tap-for-sound pill when the browser forces mute */
+  .unmute{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:7;display:none;
+    background:rgba(0,0,0,.8);color:var(--yellow);border:1px solid var(--yellow);font-size:1.2rem;padding:3px 14px;border-radius:3px}
+  .unmute.show{display:block}
+  .screen.buffering .bug::after{content:" · TUNING";color:var(--yellow)}
+  .screen{touch-action:pan-y}
+  .prog small .at{color:var(--yellow)}
+  .prog.now small{color:#fff}
+  .ctl .ch{min-width:84px;text-align:center}
+  .ctl .snd{white-space:nowrap}
+  @media (max-width:480px){ .ctl .wm{display:none} .ctl .snd{margin-left:auto} .sq{height:30px;min-width:34px} }
+
   /* ================= RESPONSIVE ================= */
   @media (max-width:860px){
     :root{--lab-w:128px}
@@ -244,7 +271,7 @@
   </div>
 
   <button class="tune" id="tuneBtn">&#9656; TUNE IN</button>
-  <div class="press">or press any key.</div>
+  <div class="press"><span class="key">or press any key.</span><span class="touch">sound comes on when you tune in.</span></div>
 
   <div class="peek"><div id="peekGrid"></div></div>
 </section>
@@ -267,6 +294,8 @@
         <canvas id="static"></canvas>
         <div class="scan"></div>
         <div class="bug" id="bug">CH --</div>
+        <div class="osd" id="osd"></div>
+        <button class="unmute" id="unmute">&#128263; TAP FOR SOUND</button>
         <div class="msg" id="msg"></div>
       </div>
       <div class="ctl">
@@ -292,7 +321,7 @@
       <div class="sec">UP NEXT</div>
       <div class="next" id="iNext"></div>
       <div class="acts">
-        <button class="btn o" id="watchBtn">WATCH</button>
+        <button class="btn o" id="watchBtn" aria-label="Watch full screen">&#9974; WATCH</button>
         <button class="btn b" id="guideJump">VIEW GUIDE</button>
       </div>
     </div></div>
@@ -311,7 +340,8 @@
 <div class="modal" id="about"><div class="card">
   <h3>About SATURDAYBOX</h3>
   <p>A tiny cable network for cartoons. Nothing is on demand: every channel follows the same broadcast clock, so whatever is on right now is on for everybody.</p>
-  <p>Arrow keys or ▲▼ change channels · M toggles sound · F goes fullscreen · click any row in the guide to tune in.</p>
+  <p>Arrow keys or ▲▼ change channels · type a number to jump straight to it · M toggles sound · F goes fullscreen · click any row in the guide to tune in.</p>
+  <p>On a phone, swipe across the screen to surf. Share a channel by copying the link — it remembers where you were.</p>
   <button class="btn o" id="aboutClose">CLOSE</button>
 </div></div>
 
@@ -380,21 +410,37 @@ function makeStatic(cv){ let raf=null;
 const tvStatic=makeStatic(staticCv), miniStatic=makeStatic($('miniStatic'));
 
 /* ---------- playback ---------- */
+let retryT=null, autoMuted=false;   // autoMuted = the browser blocked sound, not the viewer
 function tune(force){
   if(!channels.length) return;
   const ch=channels[chIndex], p=programAt(ch,now()), src=srcOf(p.item);
   if(!force && player.dataset.src===src) return;
+  clearTimeout(retryT);
   player.dataset.src=src;
-  tvStatic.on(); msg.classList.remove('show');
+  tvStatic.on(); msg.classList.remove('show'); $('screen').classList.add('buffering');
   player.src=src; player.load();
   player.addEventListener('loadedmetadata',()=>{
     try{ player.currentTime=Math.max(0,now()-programAt(ch,now()).start); }catch(e){}
-    player.play().catch(()=>{ player.muted=true; syncSoundBtn(); player.play().catch(()=>{}); });
+    player.play().catch(()=>{ autoMuted=true; player.muted=true; syncSoundBtn(); player.play().catch(()=>{}); });
   },{once:true});
 }
-player.addEventListener('playing',()=>tvStatic.off());
+player.addEventListener('playing',()=>{ tvStatic.off(); msg.classList.remove('show'); $('screen').classList.remove('buffering'); });
+player.addEventListener('waiting',()=>$('screen').classList.add('buffering'));
 player.addEventListener('ended',()=>tune(true));
-player.addEventListener('error',()=>{ tvStatic.off(); msg.textContent='NO SIGNAL — this channel is off the air right now.'; msg.classList.add('show'); });
+player.addEventListener('error',()=>{
+  if(!player.getAttribute('src')) return;
+  tvStatic.off(); $('screen').classList.remove('buffering');
+  msg.textContent='NO SIGNAL — trying again in a few seconds…'; msg.classList.add('show');
+  clearTimeout(retryT); retryT=setTimeout(()=>tune(true),8000);   // never get stuck on a dead channel
+});
+// coming back to a backgrounded tab: jump back to where the broadcast is now
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!channels.length) return;
+  const p=programAt(channels[chIndex],now());
+  if(player.dataset.src!==srcOf(p.item)) return tune(true);
+  try{ player.currentTime=now()-p.start; }catch(e){}
+  player.play().catch(()=>{});
+});
 
 // drift correction: stay locked to the broadcast clock
 setInterval(()=>{
@@ -405,16 +451,62 @@ setInterval(()=>{
   if(Math.abs(player.currentTime-want)>2.5){ try{ player.currentTime=want; }catch(e){} }
 },5000);
 
+let osdT;
+function osd(html,ms=2200){ const o=$('osd'); o.innerHTML=html; o.classList.add('show'); clearTimeout(osdT); osdT=setTimeout(()=>o.classList.remove('show'),ms); }
 function setChannel(i){
   if(!channels.length) return;
   chIndex=(i+channels.length)%channels.length;
-  tune(true); renderInfo(); renderGrid($('grid'),true);
-  toast(`CH ${channels[chIndex].id} · ${channels[chIndex].name}`);
+  const ch=channels[chIndex];
+  tune(true); renderInfo(); renderGrid($('grid'),true); keepRowInView();
+  osd(`${esc(ch.id)}<small>${esc(ch.name)}</small>`);
+  try{ localStorage.setItem('sb_cable_ch',ch.id); }catch(e){}
+  try{ const u=new URL(location.href); u.searchParams.set('ch',ch.id); history.replaceState(null,'',u.toString().replace(/=(?=&|$)/g,'')); }catch(e){}
+}
+function keepRowInView(){
+  const g=$('grid'), r=g.querySelector('.row.on'); if(!r) return;
+  const head=g.querySelector('.ghead')?.offsetHeight||0;
+  if(r.offsetTop-head<g.scrollTop) g.scrollTop=r.offsetTop-head;
+  else if(r.offsetTop+r.offsetHeight>g.scrollTop+g.clientHeight) g.scrollTop=r.offsetTop+r.offsetHeight-g.clientHeight;
+}
+function startIndex(){
+  let want=new URLSearchParams(location.search).get('ch');
+  if(!want){ try{ want=localStorage.getItem('sb_cable_ch'); }catch(e){} }
+  const i=want?channels.findIndex(c=>c.id===String(want).padStart(2,'0')):-1;
+  return i<0?0:i;
 }
 
+/* ---------- number-key channel entry (type 0 5 → CH 05) ---------- */
+let digits='', digitT;
+function digit(d){
+  digits=(digits+d).slice(-2);
+  osd(`${digits.padEnd(2,'_')}<small>ENTER CHANNEL</small>`,1800);
+  clearTimeout(digitT);
+  digitT=setTimeout(()=>{
+    const i=channels.findIndex(c=>c.id===digits.padStart(2,'0')||+c.id===+digits);
+    if(i>=0) setChannel(i); else osd(`${digits.padStart(2,'0')}<small>NO SIGNAL</small>`,1400);
+    digits='';
+  },digits.length>=2?250:1100);
+}
+
+/* ---------- swipe on the screen to surf ---------- */
+(function(){
+  let x0=null,y0=null;
+  const s=$('screen');
+  s.addEventListener('touchstart',e=>{ const t=e.touches[0]; x0=t.clientX; y0=t.clientY; },{passive:true});
+  s.addEventListener('touchend',e=>{
+    if(x0===null) return; const t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0; x0=null;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5) setChannel(chIndex+(dx<0?1:-1));
+  },{passive:true});
+})();
+
 /* ---------- sound ---------- */
-function syncSoundBtn(){ $('sndBtn').textContent = player.muted ? 'SOUND OFF' : 'SOUND ON'; }
-$('sndBtn').onclick=()=>{ player.muted=!player.muted; syncSoundBtn(); if(!player.muted) player.play().catch(()=>{}); };
+function syncSoundBtn(){
+  $('sndBtn').textContent = player.muted ? 'SOUND OFF' : 'SOUND ON';
+  $('unmute').classList.toggle('show', tuned && player.muted && autoMuted);
+}
+$('sndBtn').onclick=()=>{ autoMuted=false; player.muted=!player.muted; syncSoundBtn(); if(!player.muted) player.play().catch(()=>{}); };
+$('unmute').onclick=e=>{ e.stopPropagation(); autoMuted=false; player.muted=false; syncSoundBtn(); player.play().catch(()=>{}); };
+player.addEventListener('volumechange',syncSoundBtn);
 
 /* ---------- info panel ---------- */
 function renderInfo(){
@@ -462,20 +554,27 @@ function renderGrid(el, interactive){
   for(let k=start;k<end;k+=SLOT) html+=`<div class="tk" style="left:${pct(k)}%">${fmtClock(k)}</div>`;
   html+=`</div></div>`;
   channels.forEach((ch,ci)=>{
-    html+=`<div class="row${ci===chIndex&&interactive?' on':''}" data-ch="${ci}">
+    html+=`<div class="row${ci===chIndex&&interactive?' on':''}" data-ch="${ci}"${interactive?` tabindex="0" role="button" aria-label="Tune to channel ${esc(ch.id)} ${esc(ch.name)}"`:''}>
       <div class="lab"><span class="num">${esc(ch.id)}</span><span class="icon">${ch.icon}</span>
         <span class="meta"><b>${esc(ch.name)}</b><small>${ch.items.length} SHOW${ch.items.length>1?'S':''}</small></span></div>
       <div class="lane">`;
     guideBlocks(ch,start,end,span).forEach(p=>{
       const l=Math.max(0,pct(p.start)), r=Math.min(100,pct(p.end)); if(r<=l) return;
-      const live=t>=p.start&&t<p.end, remain=live?p.end-t:p.end-p.start;
-      html+=`<div class="prog${live?' now':''}" style="left:${l}%;width:${r-l}%" title="${esc(p.title)}">
-        <b>${esc(p.title)}</b><small>${fmtDur(remain)}</small></div>`;
+      const live=t>=p.start&&t<p.end, past=p.end<=t;
+      const sub = live ? `ON NOW · ${fmtDur(p.end-t)} left` : past ? '' : `<span class="at">${fmtClock(p.start)}</span> · ${fmtDur(p.end-p.start)}`;
+      html+=`<div class="prog${live?' now':''}" style="left:${l}%;width:${r-l}%" title="${esc(p.title)} · ${fmtClock(p.start)}–${fmtClock(p.end)}">
+        <b>${esc(p.title)}</b><small>${sub}</small></div>`;
     });
     html+=`<div class="nowline" style="left:${pct(t)}%"></div></div></div>`;
   });
-  el.innerHTML=html;
-  if(interactive) el.querySelectorAll('.row').forEach(r=>r.onclick=()=>setChannel(+r.dataset.ch));
+  const focused=el.contains(document.activeElement)?document.activeElement.dataset.ch:null;
+  const st=el.scrollTop;
+  el.innerHTML=html; el.scrollTop=st;
+  if(focused!=null) el.querySelector(`.row[data-ch="${focused}"]`)?.focus({preventScroll:true});
+  if(interactive) el.querySelectorAll('.row').forEach(r=>{
+    r.onclick=()=>setChannel(+r.dataset.ch);
+    r.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); setChannel(+r.dataset.ch); } };
+  });
 }
 
 /* ---------- splash ---------- */
@@ -503,11 +602,22 @@ function tuneIn(){
   miniStatic.off();
   player.muted=false; syncSoundBtn();            // this click/keypress is a user gesture, so sound is allowed
   player.play().catch(()=>tune(true));
-  renderInfo(); renderGrid($('grid'),true);
+  renderInfo(); renderGrid($('grid'),true); keepRowInView();
+  const ch=channels[chIndex]; osd(`${esc(ch.id)}<small>${esc(ch.name)}</small>`);
   scrollTo(0,0);
 }
 $('tuneBtn').onclick=tuneIn;
-$('home').onclick=e=>{ e.preventDefault(); };
+// logo → back to the splash (preview keeps playing, muted, in the mini TV)
+$('home').onclick=e=>{
+  e.preventDefault(); if(!tuned) return;
+  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  tuned=false; document.body.classList.remove('tuned');
+  player.muted=true; syncSoundBtn();
+  player.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
+  $('miniGlass').insertBefore(player,$('miniGlass').firstChild);
+  player.play().catch(()=>{});
+  renderSplash(); scrollTo(0,0);
+};
 
 /* ---------- controls ---------- */
 $('chUp').onclick=()=>setChannel(chIndex+1);
@@ -530,7 +640,13 @@ $('about').onclick=e=>{ if(e.target.id==='about') $('about').classList.remove('o
 document.addEventListener('keydown',e=>{
   if(e.metaKey||e.ctrlKey||e.altKey) return;
   if($('about').classList.contains('open')){ if(e.key==='Escape') $('about').classList.remove('open'); return; }
-  if(!tuned){ if(channels.length && !['Tab','Shift'].includes(e.key)){ e.preventDefault(); tuneIn(); } return; }
+  if(!tuned){ if(channels.length && !['Tab','Shift','Escape','CapsLock'].includes(e.key) && !e.target.closest('a,button')){ e.preventDefault(); tuneIn(); } return; }
+  if(/^[0-9]$/.test(e.key)){ digit(e.key); return; }
+  if(e.target.closest('.row') && (e.key==='ArrowUp'||e.key==='ArrowDown')){
+    // inside the guide, arrows move focus between rows like a real listings grid
+    e.preventDefault(); const rows=[...$('grid').querySelectorAll('.row')], k=rows.indexOf(e.target.closest('.row'));
+    rows[Math.max(0,Math.min(rows.length-1,k+(e.key==='ArrowDown'?1:-1)))]?.focus(); return;
+  }
   switch(e.key){
     case 'ArrowUp': case 'ArrowRight': e.preventDefault(); setChannel(chIndex+1); break;
     case 'ArrowDown': case 'ArrowLeft': e.preventDefault(); setChannel(chIndex-1); break;
@@ -574,6 +690,7 @@ function demoSchedule(){
   }
   if(!Array.isArray(list)||!list.length) list=demoSchedule();
   buildChannels(list);
+  chIndex=startIndex();
   $('fCount').textContent=`${channels.length} CHANNEL${channels.length===1?'':'S'}`;
   renderSplash();
   startMiniPreview();
