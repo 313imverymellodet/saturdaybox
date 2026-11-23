@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Whop Pixel -->
+<script>!function(w,d,s,u,n,a,b){if(w[n])return;a=w[n]={q:[],t:+new Date,s:[],o:u,track:function(){a.q.push([+new Date].concat([].slice.call(arguments)))},setScope:function(){a.s=[].slice.call(arguments).filter(function(x){return typeof x==="string"});a.q.push([+new Date,"setScope"].concat(a.s))},scope:function(){var c=[].slice.call(arguments);return{track:function(){a.q.push([+new Date].concat([].slice.call(arguments)).concat([{__scope:c}]))}}}};b=d.createElement(s);b.async=1;b.src=u+"/s.js";d.getElementsByTagName(s)[0].parentNode.insertBefore(b,d.getElementsByTagName(s)[0])}(window,document,"script","https://t.whop.tw","whop");whop.setScope("biz_Aw3NKeHA48H63N");whop.track("page");</script>
+<title>SATURDAYBOX</title>
+<meta name="theme-color" content="#160d2b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --grape:#2a1a4a;--grape-deep:#160d2b;--sherbet:#ff6ad5;
+    --tang:#ffb627;--aqua:#3ff0c8;--static:#c8c0d8;
+    --wood-1:#6a5430;--wood-2:#3a2e18;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(circle at 50% 18%, #432a72 0%, var(--grape-deep) 62%),
+      var(--grape-deep);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:'VT323',monospace;color:var(--static);overflow-x:hidden;padding:2rem 1rem;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* faint drifting starfield / dust */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.25;
+    background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),
+      radial-gradient(1px 1px at 70% 60%,#fff,transparent),
+      radial-gradient(1px 1px at 40% 80%,#fff,transparent),
+      radial-gradient(1px 1px at 90% 20%,#fff,transparent),
+      radial-gradient(1px 1px at 10% 70%,#fff,transparent);
+    background-size:100% 100%;animation:drift 60s linear infinite;
+  }
+  @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-40px)}}
+
+  .wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
+
+  .logo{font-family:'Bungee',sans-serif;font-size:clamp(2rem,8vw,4.5rem);line-height:.95;
+    text-align:center;margin-bottom:.4rem;letter-spacing:.02em;user-select:none;}
+  .logo .sat{color:var(--tang);text-shadow:4px 4px 0 var(--sherbet)}
+  .logo .box{color:var(--aqua);text-shadow:4px 4px 0 var(--grape)}
+  .tagline{font-size:clamp(1rem,3vw,1.4rem);color:var(--sherbet);margin-bottom:1.6rem;
+    letter-spacing:.15em;text-transform:uppercase;text-align:center;user-select:none;}
+
+  .tv{width:min(94vw,680px);
+    background:linear-gradient(160deg,var(--wood-1),var(--wood-2));
+    border-radius:30px;padding:26px 26px 26px;position:relative;
+    box-shadow:0 0 0 4px #1a140a,0 30px 70px rgba(0,0,0,.65),inset 0 2px 4px rgba(255,255,255,.18);}
+  /* wood grain hint */
+  .tv::before{content:"";position:absolute;inset:0;border-radius:30px;pointer-events:none;opacity:.12;
+    background:repeating-linear-gradient(95deg,transparent 0 7px,rgba(0,0,0,.5) 7px 8px);}
+
+  .deck{display:flex;gap:18px;align-items:stretch}
+  .screen-bay{flex:1;min-width:0}
+
+  .screen{position:relative;aspect-ratio:4/3;background:#05040a;border-radius:18px;
+    overflow:hidden;box-shadow:inset 0 0 40px rgba(0,0,0,.9),inset 0 0 8px rgba(0,0,0,1);}
+  .screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;
+    transition:filter .3s;}
+  .screen.powered-off video{filter:brightness(0)}
+
+  /* on-screen overlays */
+  .feed{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;text-align:center;padding:1rem;background:#05040a;transition:opacity .4s;}
+  .feed.hidden{opacity:0;pointer-events:none}
+  .feed .show-title{font-family:'Bungee',sans-serif;font-size:clamp(1.2rem,5vw,2.2rem);margin-bottom:.5rem;color:var(--tang)}
+  .feed .show-sub{font-size:clamp(1rem,3.5vw,1.4rem);opacity:.85}
+
+  /* analog static layer (canvas) */
+  #static{position:absolute;inset:0;z-index:4;width:100%;height:100%;opacity:0;
+    transition:opacity .18s;pointer-events:none;mix-blend-mode:screen;}
+  #static.on{opacity:.9}
+
+  /* scanlines + vignette + flicker */
+  .screen .scan{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.22) 3px,rgba(0,0,0,.22) 4px);}
+  .screen .vig{position:absolute;inset:0;z-index:6;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.55) 100%);animation:flicker .15s infinite;}
+  /* curved glass glare */
+  .screen .glare{position:absolute;inset:0;z-index:7;pointer-events:none;border-radius:18px;
+    background:linear-gradient(125deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,0) 32%);}
+  @keyframes flicker{0%,100%{opacity:.97}50%{opacity:1}}
+
+  /* channel-change flash */
+  .screen .flash{position:absolute;inset:0;z-index:8;background:#fff;opacity:0;pointer-events:none;}
+  .screen .flash.go{animation:chflash .35s ease-out}
+  @keyframes chflash{0%{opacity:.85}100%{opacity:0}}
+
+  /* HUD */
+  .channel-label{position:absolute;top:12px;right:16px;z-index:9;font-size:1.3rem;
+    color:var(--aqua);text-shadow:0 0 6px var(--aqua);letter-spacing:.05em;user-select:none;}
+  .live-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff3b3b;
+    margin-right:6px;animation:pulse 1.2s infinite;vertical-align:middle}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  /* big channel number bug when surfing */
+  .ch-bug{position:absolute;top:12px;left:16px;z-index:9;font-family:'Bungee',sans-serif;
+    font-size:2rem;color:var(--tang);text-shadow:0 0 10px rgba(255,182,39,.7);
+    opacity:0;transition:opacity .25s;user-select:none;}
+  .ch-bug.show{opacity:1}
+
+  /* ===== TV GUIDE — classic cable-listings grid ===== */
+  .guide{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#0a1e5e 0%,#071444 100%);color:#eaf0ff;
+    font-family:'VT323',monospace;opacity:0;pointer-events:none;transition:opacity .25s;
+    --gch-w:132px;--grow-h:48px;}
+  .guide.open{opacity:1;pointer-events:auto}
+  /* top bar */
+  .gbar{display:flex;align-items:center;gap:14px;padding:9px 16px;flex:0 0 auto;
+    background:linear-gradient(180deg,#14328f,#0a1e5e);border-bottom:2px solid #2a4bb0}
+  .gbrand{font-family:'Bungee',sans-serif;font-size:1.5rem;line-height:1;letter-spacing:.02em}
+  .gbrand .sat{color:var(--tang)} .gbrand .box{color:var(--aqua)}
+  .gbar-mid{margin-left:auto;font-size:1.3rem;color:#cfe0ff;letter-spacing:.04em}
+  .gbar-mid b{color:#fff;margin-left:.3em} .gmail{color:#8fb4ff}
+  .gbadge{background:#e11d1d;color:#fff;font-family:'Bungee',sans-serif;font-size:.8rem;
+    line-height:.9;padding:6px 9px;border-radius:5px;text-align:center;box-shadow:0 2px 0 #7a0e0e}
+  .gbadge span{display:block;font-size:1.15rem}
+  /* preview banner */
+  .gpreview{display:flex;gap:16px;padding:14px 16px;flex:0 0 auto;min-height:120px;
+    background:linear-gradient(180deg,rgba(70,120,230,.38),rgba(20,50,140,.12));border-bottom:2px solid #2a4bb0}
+  .gp-info{flex:1;min-width:0}
+  .gp-titlerow{display:flex;align-items:baseline;gap:12px}
+  .gp-title{font-size:2.1rem;color:#ffe14d;font-weight:bold;line-height:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gp-chan{margin-left:auto;font-size:1.4rem;color:#cfe0ff;white-space:nowrap}
+  .gp-time{font-size:1.5rem;color:#fff;margin:.15em 0 .35em}
+  .gp-desc{font-size:1.35rem;color:#dfe8ff;line-height:1.15;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .gp-art{flex:0 0 200px;border-radius:8px;overflow:hidden;position:relative;
+    background:radial-gradient(circle at 50% 38%,#3a6bd0,#0a1e5e);display:grid;place-items:center;
+    box-shadow:inset 0 0 30px rgba(0,0,0,.55)}
+  .gp-art span{font-family:'Bungee',sans-serif;font-size:3rem;color:rgba(255,255,255,.9);text-shadow:0 2px 8px #000}
+  .gp-art::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.18) 3px 4px)}
+  /* time header */
+  .gtimes{display:flex;align-items:stretch;height:34px;flex:0 0 auto;font-size:1.3rem;
+    background:#061238;border-bottom:1px solid #2a4bb0}
+  .gtoday{width:var(--gch-w);flex:0 0 var(--gch-w);display:flex;align-items:center;gap:8px;padding-left:6px;
+    color:#bcd0ff;letter-spacing:.08em;border-right:1px solid #2a4bb0;overflow:hidden;white-space:nowrap}
+  .gslots{flex:1;display:grid}
+  .gslot{display:flex;align-items:center;padding-left:10px;color:#fff;border-left:1px solid #2a4bb0}
+  .gnav{background:#123089;color:#fff;border:none;width:32px;cursor:pointer;font-size:.9rem;flex:0 0 auto}
+  .gnav:hover{background:#1c46bf}
+  /* grid */
+  .ggrid{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+  .grow{display:flex;align-items:stretch;height:var(--grow-h);border-bottom:1px solid #163a86}
+  .gcell{width:var(--gch-w);flex:0 0 var(--gch-w);display:flex;flex-direction:column;justify-content:center;
+    padding:0 10px;background:linear-gradient(180deg,#bcd4ff,#8fb0f0);color:#0a1e5e;
+    border-right:1px solid #2a4bb0;cursor:pointer}
+  .gcell.sel{background:linear-gradient(180deg,#ffe98a,#ffcf3f)}
+  .gcell .gc-num{font-size:1.35rem;font-weight:bold;line-height:1}
+  .gcell .gc-net{font-size:1rem;opacity:.8;line-height:1.1}
+  .glane{flex:1;position:relative;overflow:hidden;background:#0a1e5e}
+  .gprog{position:absolute;top:3px;bottom:3px;border-radius:5px;padding:0 10px;display:flex;align-items:center;
+    color:#fff;font-size:1.25rem;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    border:1px solid rgba(255,255,255,.16)}
+  .gprog:hover{filter:brightness(1.14)}
+  .gprog.sel{outline:3px solid #ffe14d;outline-offset:-3px;z-index:3;color:#241a00;
+    background:linear-gradient(180deg,#ffe98a,#ffcf3f)!important}
+  .gprog.live::before{content:"●";color:#ff5a5a;margin-right:.35em;font-size:.8em}
+  .gnowline{position:absolute;top:0;bottom:0;width:2px;background:#ff5a5a;z-index:4;pointer-events:none;
+    box-shadow:0 0 6px #ff5a5a}
+  /* footer help */
+  .gfoot{flex:0 0 auto;display:flex;gap:18px;justify-content:center;padding:8px;font-size:1.1rem;color:#9fb6ee;
+    background:#061238;border-top:1px solid #2a4bb0}
+  .gfoot b{color:var(--aqua)}
+
+  /* control rail (right of screen) */
+  .rail{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:12px;
+    padding:6px 0;}
+  .brand-plate{writing-mode:vertical-rl;text-orientation:mixed;font-family:'Bungee',sans-serif;
+    font-size:.7rem;color:#1a140a;opacity:.55;letter-spacing:.15em;margin-top:auto;user-select:none;}
+  .pbtn{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+    background:radial-gradient(circle at 35% 30%,#5a5a5a,#161616);
+    box-shadow:0 3px 5px rgba(0,0,0,.6),inset 0 1px 2px rgba(255,255,255,.35);
+    color:var(--static);font-size:1.2rem;display:grid;place-items:center;transition:transform .08s, color .2s;}
+  .pbtn:active{transform:translateY(2px)}
+  .pbtn .ico{font-family:'VT323',monospace;font-size:1.4rem;line-height:1}
+  .pbtn.power{color:#ff5a5a}
+  .pbtn.power.on{color:var(--aqua)}
+  .pbtn small{display:block;font-size:.55rem;color:#cdbfae;margin-top:2px}
+
+  /* knobs row under screen */
+  .knobs{display:flex;align-items:center;justify-content:space-between;margin-top:14px;gap:14px}
+  .knob-cluster{display:flex;gap:18px;align-items:center}
+  .knob{width:34px;height:34px;border-radius:50%;cursor:pointer;
+    background:radial-gradient(circle at 35% 35%,#999,#222);
+    box-shadow:0 2px 4px rgba(0,0,0,.6),inset 0 1px 2px rgba(255,255,255,.3);position:relative;transition:transform .1s}
+  .knob::after{content:"";position:absolute;top:4px;left:50%;width:3px;height:11px;background:#eee;border-radius:2px;transform:translateX(-50%)}
+  .knob:active{transform:scale(.94)}
+  .knob-lbl{font-size:.85rem;text-align:center;color:#1a140a;opacity:.7;margin-top:2px;font-family:'Bungee',sans-serif}
+  .knob-wrap{display:flex;flex-direction:column;align-items:center}
+
+  .vol-wrap{display:flex;align-items:center;gap:8px;color:#1a140a}
+  .vol-wrap .vico{font-size:1.3rem;opacity:.7}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:120px;height:8px;border-radius:6px;
+    background:#1a140a;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:var(--tang);box-shadow:0 1px 3px rgba(0,0,0,.6);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--tang);cursor:pointer}
+  .speaker{flex:0 0 auto;width:48px;align-self:stretch;border-radius:10px;margin-left:2px;
+    background:radial-gradient(#000 1px,transparent 1.4px) 0 0/7px 7px,linear-gradient(160deg,var(--wood-1),var(--wood-2));
+    box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
+
+  /* bottom info bar */
+  .now-bar{margin-top:1.4rem;font-size:1.25rem;text-align:center;letter-spacing:.05em;max-width:640px}
+  .now-bar .lbl{color:var(--tang)}
+  .now-bar .ttl{color:var(--aqua)}
+  .upnext{font-size:1rem;opacity:.7;margin-top:.25rem}
+  .upnext .nx{color:var(--sherbet)}
+
+  /* progress through current show */
+  .prog{width:min(94vw,640px);height:6px;border-radius:4px;background:rgba(255,255,255,.12);
+    margin-top:.9rem;overflow:hidden}
+  .prog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sherbet),var(--tang));transition:width .5s linear}
+
+  .hint{margin-top:1rem;font-size:1rem;opacity:.55;text-align:center;letter-spacing:.05em}
+  .hint kbd{background:#000;border:1px solid #444;border-radius:4px;padding:0 .35em;color:var(--aqua)}
+
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:#000;border:1px solid var(--aqua);color:var(--aqua);padding:.4rem 1rem;border-radius:8px;
+    font-size:1.1rem;opacity:0;transition:.3s;z-index:50;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* phones: stack the control rail under the screen as a horizontal bar */
+  @media (max-width:560px){
+    body{padding:1.2rem .6rem}
+    .tagline{margin-bottom:1.1rem}
+    .tv{padding:16px;border-radius:22px}
+    .deck{flex-direction:column;gap:12px}
+    .screen-bay{order:1}
+    .rail{order:2;flex-basis:auto;flex-direction:row;flex-wrap:wrap;
+      justify-content:center;align-items:center;gap:16px;padding:2px 0}
+    .pbtn{width:54px;height:54px;font-size:1.35rem}
+    .brand-plate{display:none}
+    .speaker{display:none}
+    .knobs{flex-wrap:wrap;justify-content:center;gap:18px}
+    .knob{width:46px;height:46px}
+    .knob::after{height:14px}
+    .vol-wrap{flex:1 1 100%;justify-content:center;margin-top:4px}
+    input[type=range]{width:62vw;max-width:260px;height:12px}
+    input[type=range]::-webkit-slider-thumb{width:24px;height:24px}
+    input[type=range]::-moz-range-thumb{width:24px;height:24px}
+    .now-bar{font-size:1.15rem}
+    .hint{display:none}            /* keyboard shortcuts irrelevant on touch */
+    /* guide: tighter columns + hide the keyboard help footer on touch */
+    .guide{--gch-w:74px;--grow-h:46px}
+    .gbrand{font-size:1.05rem} .gbar-mid{display:none} .gbadge{font-size:.65rem}
+    .gpreview{gap:10px;padding:10px 12px;min-height:96px}
+    .gp-title{font-size:1.45rem} .gp-time{font-size:1.2rem}
+    .gp-desc{font-size:1.1rem;-webkit-line-clamp:2} .gp-chan{font-size:1.1rem}
+    .gp-art{flex-basis:88px} .gp-art span{font-size:1.7rem}
+    .gtimes{font-size:1.1rem} .gcell .gc-num{font-size:1.15rem} .gcell .gc-net{font-size:.85rem}
+    .gtoday-lbl{display:none}   /* just the ◀ arrow fits on phones */
+    .gprog{font-size:1.1rem;padding:0 7px}
+    .gfoot{display:none}
+  }
+  /* don't let iOS double-tap-zoom fight the controls */
+  .pbtn,.knob,.guide-row,input[type=range],.vol-wrap,.screen{touch-action:manipulation}
+  @media (prefers-reduced-motion:reduce){
+    .screen .vig,.live-dot,body::before{animation:none}
+    #static{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="logo"><span class="sat">SATURDAY</span><span class="box">BOX</span></h1>
+  <p class="tagline">cartoons. all day. forever. · <a href="/" style="color:var(--aqua)">&#9656; cable guide</a></p>
+
+  <div class="tv">
+    <div class="deck">
+      <div class="screen-bay">
+        <div class="screen powered-off" id="screen">
+          <div class="ch-bug" id="chBug">02</div>
+          <div class="channel-label"><span class="live-dot"></span>CH <span id="chNum">02</span></div>
+          <video id="player" playsinline muted></video>
+          <canvas id="static"></canvas>
+          <div class="feed" id="feed">
+            <div class="show-title">SATURDAYBOX</div>
+            <div class="show-sub" id="bootMsg">press POWER to tune in…</div>
+          </div>
+
+          <div class="scan"></div>
+          <div class="vig"></div>
+          <div class="glare"></div>
+          <div class="flash" id="flash"></div>
+        </div>
+
+        <div class="knobs">
+          <div class="knob-cluster">
+            <div class="knob-wrap">
+              <div class="knob" id="knobCh" title="Change channel"></div>
+              <div class="knob-lbl">CH</div>
+            </div>
+            <div class="knob-wrap">
+              <div class="knob" id="knobGuide" title="TV guide"></div>
+              <div class="knob-lbl">GUIDE</div>
+            </div>
+          </div>
+          <div class="vol-wrap">
+            <span class="vico" id="volIco">&#128263;</span>
+            <input type="range" id="vol" min="0" max="100" value="0" aria-label="Volume">
+          </div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <button class="pbtn power" id="power" title="Power (P)"><span class="ico">&#9211;</span></button>
+        <button class="pbtn" id="prevCh" title="Channel down">&#9660;</button>
+        <button class="pbtn" id="nextCh" title="Channel up">&#9650;</button>
+        <button class="pbtn" id="guideBtn" title="Guide (G)">&#9776;</button>
+        <button class="pbtn" id="fs" title="Fullscreen (F)">&#9974;</button>
+        <div class="speaker"></div>
+        <div class="brand-plate">SATURDAYBOX</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prog"><i id="progBar"></i></div>
+  <div class="now-bar">
+    <div><span class="lbl">NOW PLAYING &#9656; </span><span class="ttl" id="nowTitle">&mdash;</span></div>
+    <div class="upnext">UP NEXT &#9656; <span class="nx" id="nextTitle">&mdash;</span></div>
+  </div>
+
+  <div class="hint">
+    <kbd>P</kbd> power &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> channel &nbsp;
+    <kbd>&uarr;</kbd><kbd>&darr;</kbd> volume &nbsp; <kbd>M</kbd> mute &nbsp;
+    <kbd>G</kbd> guide &nbsp; <kbd>F</kbd> fullscreen
+  </div>
+</div>
+
+<!-- ===== TV GUIDE (classic cable grid) ===== -->
+<div class="guide" id="guide" aria-hidden="true">
+  <div class="gbar">
+    <div class="gbrand"><span class="sat">SATURDAY</span><span class="box">BOX</span></div>
+    <div class="gbar-mid"><span class="gmail">&#9993;</span> TV Listings <b id="gClock">--:--</b></div>
+    <div class="gbadge">TV<span>GUIDE</span></div>
+  </div>
+
+  <div class="gpreview">
+    <div class="gp-info">
+      <div class="gp-titlerow">
+        <span class="gp-title" id="gpTitle">&mdash;</span>
+        <span class="gp-chan" id="gpChan">CH &mdash;</span>
+      </div>
+      <div class="gp-time" id="gpTime"></div>
+      <div class="gp-desc" id="gpDesc"></div>
+    </div>
+    <div class="gp-art"><span id="gpArtCh">02</span></div>
+  </div>
+
+  <div class="gtimes">
+    <div class="gtoday"><button class="gnav" id="gPrevTime" aria-label="Earlier">&#9664;</button><span class="gtoday-lbl">TODAY</span></div>
+    <div class="gslots" id="gSlots"></div>
+    <button class="gnav" id="gNextTime" aria-label="Later">&#9654;</button>
+  </div>
+
+  <div class="ggrid" id="gGrid"></div>
+
+  <div class="gfoot">
+    <span><b>&uarr;&darr;</b> channel</span><span><b>&larr;&rarr;</b> time</span>
+    <span><b>ENTER</b> watch</span><span><b>G</b>/<b>ESC</b> close</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG — edit these for your bucket
+   ============================================================ */
+const BASE_URL     = "https://pub-70f47726e98e4093b322f3288fc13cb8.r2.dev";    // public R2 base URL (no trailing slash)
+const MANIFEST_URL = BASE_URL + "/manifest.json";
+const DEMO_IF_NO_BUCKET = true; // falls back to demo only if the bucket/manifest can't be reached
+
+/* manifest.json format (duration in SECONDS, must be accurate for sync):
+[
+  { "title":"Morning Toons", "file":"morning-toons.mp4", "duration":1320, "channel":"02" },
+  { "title":"Robo Rangers",  "file":"robo-rangers.mp4",  "duration":1500, "channel":"05" }
+]
+   - clips sharing a "channel" are grouped into that channel's loop
+============================================================ */
+
+const $ = id => document.getElementById(id);
+const player=$('player'), feed=$('feed'), bootMsg=$('bootMsg'), nowTitle=$('nowTitle'),
+      nextTitle=$('nextTitle'), chNum=$('chNum'), chBug=$('chBug'), screenEl=$('screen'),
+      staticCv=$('static'), flash=$('flash'), guide=$('guide'),
+      progBar=$('progBar'), toast=$('toast'), vol=$('vol'), volIco=$('volIco'),
+      powerBtn=$('power');
+
+let schedule=[];        // flat list
+let channels=[];        // [{id, items:[...], total}]
+let chIndex=0;          // current channel index
+let powered=false;
+let lastVol=70;
+
+const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const clockSeconds = ()=> Date.now()/1000;
+
+/* ---------- toast ---------- */
+let toastT;
+function showToast(msg){
+  toast.textContent=msg; toast.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>toast.classList.remove('show'),1400);
+}
+
+/* ---------- build channels from flat schedule ---------- */
+function buildChannels(list){
+  const map=new Map();
+  list.forEach((it,i)=>{
+    const id = String(it.channel || (i+2)).padStart(2,'0');
+    if(!map.has(id)) map.set(id,{id,items:[],total:0});
+    const c=map.get(id); c.items.push(it); c.total+=Number(it.duration)||0;
+  });
+  channels=[...map.values()].filter(c=>c.total>0).sort((a,b)=>a.id.localeCompare(b.id));
+}
+
+/* ---------- which clip + offset is "live" on a channel right now ---------- */
+function currentSlot(ch){
+  if(!ch||!ch.total) return null;
+  let offset = clockSeconds() % ch.total;
+  for(const item of ch.items){
+    const d=Number(item.duration)||0;
+    if(offset < d) return {item, seekTo:offset, remaining:d-offset};
+    offset -= d;
+  }
+  return {item:ch.items[0], seekTo:0, remaining:ch.items[0].duration};
+}
+function upNextOf(ch){
+  if(!ch||ch.items.length===0) return null;
+  let offset=clockSeconds()%ch.total, idx=0;
+  for(let i=0;i<ch.items.length;i++){
+    const d=Number(ch.items[i].duration)||0;
+    if(offset<d){idx=i;break;} offset-=d;
+  }
+  return ch.items[(idx+1)%ch.items.length];
+}
+
+/* ---------- analog static (canvas) ---------- */
+let staticRAF=null;
+function paintStatic(){
+  const w=staticCv.width=160, h=staticCv.height=120;
+  const ctx=staticCv.getContext('2d');
+  const img=ctx.createImageData(w,h), d=img.data;
+  for(let i=0;i<d.length;i+=4){const v=Math.random()*255|0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=235;}
+  ctx.putImageData(img,0,0);
+}
+function startStatic(){
+  staticCv.classList.add('on');
+  if(reduceMotion){paintStatic();return;}
+  const loop=()=>{paintStatic();staticRAF=requestAnimationFrame(loop);};
+  if(!staticRAF) loop();
+}
+function stopStatic(){
+  staticCv.classList.remove('on');
+  if(staticRAF){cancelAnimationFrame(staticRAF);staticRAF=null;}
+}
+
+/* ---------- tune the current channel ---------- */
+function tuneIn(force){
+  if(!powered) return;
+  const ch=channels[chIndex];
+  const slot=currentSlot(ch);
+  if(!slot) return;
+  const {item,seekTo}=slot;
+  chNum.textContent=ch.id;
+  nowTitle.textContent=item.title;
+  const nx=upNextOf(ch);
+  nextTitle.textContent = nx ? nx.title : '—';
+
+  if(force || player.dataset.file!==item.file){
+    player.dataset.file=item.file;
+    player.src = item.url || (BASE_URL+"/"+item.file);
+    player.load();
+    player.addEventListener('loadedmetadata',()=>{
+      try{ if(isFinite(seekTo)) player.currentTime=seekTo; }catch(e){}
+      player.play().then(()=>{ feed.classList.add('hidden'); stopStatic(); })
+                   .catch(()=>{ feed.classList.add('hidden'); stopStatic(); });
+    },{once:true});
+    player.addEventListener('error',()=>{
+      stopStatic(); feed.classList.remove('hidden');
+      bootMsg.textContent="no signal — check bucket / manifest";
+    },{once:true});
+  }
+}
+
+/* channel surf with static + flash transition */
+function changeChannel(dir){
+  if(!powered||channels.length===0) return;
+  chIndex=(chIndex+dir+channels.length)%channels.length;
+  const ch=channels[chIndex];
+  chNum.textContent=ch.id;
+  chBug.textContent=ch.id; chBug.classList.add('show');
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+  startStatic();
+  showToast("CH "+ch.id);
+  clearTimeout(changeChannel._t);
+  changeChannel._t=setTimeout(()=>{
+    tuneIn(true);
+    setTimeout(()=>chBug.classList.remove('show'),900);
+  }, reduceMotion?100:420);
+}
+
+/* ---------- power ---------- */
+function setPower(on){
+  powered=on;
+  powerBtn.classList.toggle('on',on);
+  screenEl.classList.toggle('powered-off',!on);
+  if(on){
+    feed.classList.remove('hidden');
+    bootMsg.textContent="tuning in…";
+    startStatic();
+    showToast("POWER ON");
+    setTimeout(()=>tuneIn(true), reduceMotion?100:600);
+  }else{
+    stopStatic();
+    player.pause();
+    feed.classList.remove('hidden');
+    bootMsg.textContent="press POWER to tune in…";
+    nowTitle.textContent="—"; nextTitle.textContent="—";
+    progBar.style.width="0%";
+    showToast("POWER OFF");
+  }
+}
+
+/* ---------- volume ---------- */
+function applyVolume(v){
+  v=Math.max(0,Math.min(100,v));
+  vol.value=v;
+  player.volume=v/100;
+  player.muted = v===0;
+  volIco.innerHTML = v===0 ? "&#128263;" : v<50 ? "&#128265;" : "&#128266;";
+}
+vol.addEventListener('input',e=>{ const v=+e.target.value; if(v>0)lastVol=v; applyVolume(v); if(powered)player.play().catch(()=>{}); });
+volIco.addEventListener('click',()=> applyVolume(player.muted||+vol.value===0 ? lastVol : 0));
+
+/* ---------- tune to an arbitrary channel index (with static/flash) ---------- */
+function tuneToChannel(i){
+  if(channels.length===0) return;
+  i=(i+channels.length)%channels.length;
+  if(i===chIndex){ return; }
+  chIndex=i;
+  const ch=channels[chIndex];
+  chNum.textContent=ch.id; chBug.textContent=ch.id; chBug.classList.add('show');
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+  startStatic(); showToast("CH "+ch.id);
+  clearTimeout(tuneToChannel._t);
+  tuneToChannel._t=setTimeout(()=>{
+    tuneIn(true); setTimeout(()=>chBug.classList.remove('show'),900);
+  }, reduceMotion?100:420);
+}
+
+/* ============================================================
+   TV GUIDE — classic cable-listings grid, driven by the broadcast clock
+   ============================================================ */
+const SLOT=1800;                      // 30-minute columns
+let guideWinOffset=0;                  // how many slots ahead of "now" the window starts
+let selCh=0, selTime=0;                // grid cursor (channel row + timestamp)
+
+const PCOLORS=['#1f57c4','#1a7a3a','#6a2fb0','#0f6d86','#b03a6a','#243f9e','#8a5a12'];
+function progColor(t){ let h=0; for(const c of t) h=(h*31+c.charCodeAt(0))>>>0; return PCOLORS[h%PCOLORS.length]; }
+function netOf(ch){ return (ch.items[0] && ch.items[0].net) || "TOON"; }
+function slotsVisible(){ return matchMedia('(max-width:560px)').matches ? 2 : 3; }
+function guideBase(){ return Math.floor(clockSeconds()/SLOT)*SLOT; }
+
+function fmtTime(ts){
+  const d=new Date(ts*1000); let h=d.getHours(); const m=d.getMinutes();
+  const ap=h>=12?'p':'a'; h=h%12||12;
+  return h+':'+String(m).padStart(2,'0')+ap;
+}
+/* which program instance is airing on ch at absolute time t (with its real start/end) */
+function programAt(ch,t){
+  const T=ch.total; if(!T) return null;
+  let off=((t%T)+T)%T, acc=0, idx=0;
+  for(let i=0;i<ch.items.length;i++){ const d=Number(ch.items[i].duration)||0;
+    if(off<acc+d){ idx=i; break; } acc+=d; }
+  const start=t-(off-acc), it=ch.items[idx];
+  return {item:it, start, end:start+(Number(it.duration)||0), idx};
+}
+function programsInWindow(ch,startT,endT){
+  const out=[]; const p=programAt(ch,startT); if(!p) return out;
+  let i=p.idx, t=p.start, guard=0;
+  while(t<endT && guard++<400){
+    const it=ch.items[i%ch.items.length]; const d=Number(it.duration)||0;
+    out.push({item:it, start:t, end:t+d}); t+=d; i++;
+  }
+  return out;
+}
+
+function renderGuide(){
+  if(!channels.length) return;
+  const now=clockSeconds(), SL=slotsVisible();
+  const winStart=guideBase()+guideWinOffset*SLOT, winLen=SL*SLOT, winEnd=winStart+winLen;
+
+  // keep the cursor inside the window
+  if(selCh>=channels.length) selCh=channels.length-1; if(selCh<0) selCh=0;
+  if(selTime<winStart) selTime=winStart; if(selTime>=winEnd) selTime=winEnd-1;
+
+  $('gClock').textContent=fmtTime(now);
+
+  // time-slot header (aligned to the program lanes)
+  const slotsEl=$('gSlots'); slotsEl.style.gridTemplateColumns=`repeat(${SL},1fr)`;
+  slotsEl.innerHTML='';
+  for(let k=0;k<SL;k++){ const d=document.createElement('div'); d.className='gslot';
+    d.textContent=fmtTime(winStart+k*SLOT); slotsEl.appendChild(d); }
+
+  // channel rows
+  const grid=$('gGrid'); grid.innerHTML='';
+  channels.forEach((ch,ci)=>{
+    const row=document.createElement('div'); row.className='grow';
+    const cell=document.createElement('div'); cell.className='gcell'+(ci===selCh?' sel':'');
+    cell.innerHTML=`<span class="gc-num">${ch.id}</span><span class="gc-net">${netOf(ch)}</span>`;
+    cell.onclick=()=>{ selCh=ci; selTime=Math.max(winStart,Math.min(winEnd-1,now)); renderGuide(); };
+
+    const lane=document.createElement('div'); lane.className='glane';
+    programsInWindow(ch,winStart,winEnd).forEach(p=>{
+      const left=Math.max(0,(p.start-winStart)/winLen*100);
+      const right=Math.min(100,(p.end-winStart)/winLen*100);
+      if(right<=left) return;
+      const live = now>=p.start && now<p.end;
+      const sel  = ci===selCh && selTime>=p.start && selTime<p.end;
+      const b=document.createElement('div');
+      b.className='gprog'+(live?' live':'')+(sel?' sel':'');
+      b.style.left=left+'%'; b.style.width=(right-left)+'%';
+      if(!sel) b.style.background=progColor(p.item.title);
+      b.textContent=p.item.title; b.title=p.item.title;
+      b.onclick=()=>{ selCh=ci; selTime=p.start; tuneToChannel(ci); toggleGuide(false); };
+      lane.appendChild(b);
+    });
+    if(now>=winStart && now<winEnd){ const nl=document.createElement('div'); nl.className='gnowline';
+      nl.style.left=((now-winStart)/winLen*100)+'%'; lane.appendChild(nl); }
+
+    row.appendChild(cell); row.appendChild(lane); grid.appendChild(row);
+  });
+
+  // preview banner reflects the cursor
+  const ch=channels[selCh], sp=programAt(ch,selTime);
+  $('gpTitle').textContent = sp ? sp.item.title : '—';
+  $('gpChan').textContent  = `${ch.id} ${netOf(ch)}`;
+  $('gpTime').textContent  = sp ? `${fmtTime(sp.start)}-${fmtTime(sp.end)}` : '';
+  $('gpDesc').textContent  = sp ? (sp.item.desc || `${sp.item.title} — nonstop cartoons on SATURDAYBOX.`) : '';
+  $('gpArtCh').textContent = ch.id;
+}
+
+function guideNav(key){
+  const SL=slotsVisible();
+  if(key==='ArrowUp')        selCh=(selCh-1+channels.length)%channels.length;
+  else if(key==='ArrowDown') selCh=(selCh+1)%channels.length;
+  else if(key==='ArrowLeft'){ selTime-=SLOT; if(selTime<guideBase()+guideWinOffset*SLOT) guideWinOffset=Math.max(0,guideWinOffset-1); }
+  else if(key==='ArrowRight'){ selTime+=SLOT; if(selTime>=guideBase()+(guideWinOffset+SL)*SLOT) guideWinOffset++; }
+  renderGuide();
+}
+
+function toggleGuide(force){
+  const open = force!==undefined ? force : !guide.classList.contains('open');
+  if(open){
+    if(!powered) return;
+    selCh=chIndex; selTime=clockSeconds(); guideWinOffset=0;
+    renderGuide();
+  }
+  guide.classList.toggle('open',open);
+  guide.setAttribute('aria-hidden', open?'false':'true');
+}
+
+/* ---------- drift correction + HUD tick ---------- */
+setInterval(()=>{
+  if(!powered) return;
+  const ch=channels[chIndex];
+  const slot=currentSlot(ch);
+  if(!slot) return;
+  if(player.dataset.file!==slot.item.file){ tuneIn(); return; }
+  if(Math.abs(player.currentTime-slot.seekTo)>2 && isFinite(slot.seekTo)){
+    try{ player.currentTime=slot.seekTo; }catch(e){}
+  }
+},5000);
+
+setInterval(()=>{
+  if(!powered) return;
+  const ch=channels[chIndex];
+  const slot=currentSlot(ch);
+  if(!slot) return;
+  const d=Number(slot.item.duration)||1;
+  progBar.style.width=Math.min(100,((d-slot.remaining)/d)*100)+"%";
+  if(guide.classList.contains('open')) renderGuide();
+},1000);
+
+player.addEventListener('ended',()=>tuneIn(true));
+
+/* ---------- controls wiring ---------- */
+powerBtn.addEventListener('click',()=>setPower(!powered));
+$('nextCh').addEventListener('click',()=>changeChannel(1));
+$('prevCh').addEventListener('click',()=>changeChannel(-1));
+$('knobCh').addEventListener('click',()=>changeChannel(1));
+$('guideBtn').addEventListener('click',()=>toggleGuide());
+$('knobGuide').addEventListener('click',()=>toggleGuide());
+$('gPrevTime').addEventListener('click',()=>{ guideWinOffset=Math.max(0,guideWinOffset-1); selTime-=SLOT; renderGuide(); });
+$('gNextTime').addEventListener('click',()=>{ guideWinOffset++; selTime+=SLOT; renderGuide(); });
+$('fs').addEventListener('click',toggleFs);
+screenEl.addEventListener('dblclick',toggleFs);
+
+function toggleFs(){
+  const el=document.querySelector('.tv');
+  if(document.fullscreenElement){ document.exitFullscreen?.(); return; }
+  if(el.requestFullscreen){ el.requestFullscreen(); }
+  else if(el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); }
+  else if(player.webkitEnterFullscreen){ player.webkitEnterFullscreen(); } // iOS Safari: fullscreen the video
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  // While the guide is open, arrows/Enter drive the grid instead of the TV.
+  if(guide.classList.contains('open')){
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); guideNav(e.key); return; }
+    if(e.key==='Enter'){ tuneToChannel(selCh); toggleGuide(false); return; }
+    if(e.key==='g'||e.key==='G'||e.key==='Escape'){ toggleGuide(false); return; }
+    return;
+  }
+  switch(e.key){
+    case 'p':case 'P': setPower(!powered); break;
+    case 'ArrowRight': changeChannel(1); break;
+    case 'ArrowLeft':  changeChannel(-1); break;
+    case 'ArrowUp':   e.preventDefault(); applyVolume((+vol.value)+10); if(+vol.value>0)lastVol=+vol.value; break;
+    case 'ArrowDown': e.preventDefault(); applyVolume((+vol.value)-10); break;
+    case 'm':case 'M': applyVolume(player.muted||+vol.value===0?lastVol:0); break;
+    case 'g':case 'G': toggleGuide(); break;
+    case 'f':case 'F': toggleFs(); break;
+    case 'Escape': toggleGuide(false); break;
+  }
+});
+
+/* ---------- demo schedule (used if bucket is unconfigured) ---------- */
+function demoSchedule(){
+  // Tiny public-domain sample clips so the box visibly "plays" with no bucket.
+  const SAMP="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/";
+  return [
+    {title:"Morning Toons",   channel:"02", net:"TOON", duration:60,  url:SAMP+"ForBiggerJoyrides.mp4", desc:"Wall-to-wall cartoons to kick off your Saturday."},
+    {title:"Robo Rangers",    channel:"02", net:"TOON", duration:60,  url:SAMP+"ForBiggerEscapes.mp4",  desc:"Five teens, five mecha, one very bad week for the villains."},
+    {title:"Critter Cafe",    channel:"05", net:"NIK",  duration:60,  url:SAMP+"ForBiggerFun.mp4",      desc:"A cozy diner run entirely by talking animals."},
+    {title:"Galaxy Patrol",   channel:"05", net:"NIK",  duration:60,  url:SAMP+"ForBiggerBlazes.mp4",   desc:"Space cadets keep the peace across nine wobbly moons."},
+    {title:"Sunday Funnies",  channel:"08", net:"KIDS", duration:15,  url:SAMP+"ForBiggerMeltdowns.mp4",desc:"The comic pages come to life in short bursts."},
+    {title:"Late Late Toons", channel:"08", net:"KIDS", duration:594, url:SAMP+"BigBuckBunny.mp4",      desc:"A big, gentle rabbit outwits three rowdy rodents."},
+  ];
+}
+
+
+/* lineup.json (in this repo) adds public-domain channels on top of the bucket manifest.
+   Bucket channels always win: a lineup channel is skipped if the manifest already uses that number. */
+async function withLineup(list){
+  let extra=[];
+  try{ const r=await fetch('lineup.json',{cache:'no-store'}); if(r.ok) extra=await r.json(); }catch(e){ console.warn('lineup',e); }
+  const taken=new Set((list||[]).map(it=>String(it.channel).padStart(2,'0')));
+  extra=(Array.isArray(extra)?extra:[]).filter(it=>!taken.has(String(it.channel).padStart(2,'0')));
+  return [...(list||[]),...extra].map(it=>({...it,file:it.file||it.url}));
+}
+/* ---------- boot ---------- */
+async function boot(){
+  let list=null;
+  if(!BASE_URL.includes("YOUR-BUCKET")){
+    try{
+      const res=await fetch(MANIFEST_URL,{cache:"no-store"});
+      if(!res.ok) throw new Error("manifest "+res.status);
+      list=await res.json();
+    }catch(err){ console.error(err); }
+  }
+  list=await withLineup(Array.isArray(list)?list:[]);
+  if((!list||!list.length) && DEMO_IF_NO_BUCKET){
+    list=demoSchedule();
+    bootMsg.textContent="DEMO MODE — press POWER";
+  }
+  if(!list||!list.length){
+    bootMsg.textContent="no signal — check bucket / manifest";
+    return;
+  }
+  schedule=list;
+  buildChannels(list);
+  // default starting volume off (so autoplay works); user opens sound via slider/M
+  applyVolume(0);
+}
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+[
+ {
+  "title": "Patriotic Popeye",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 363,
+  "url": "https://archive.org/download/popeye_patriotic_popeye/popeye_patriotic_popeye_512kb.mp4",
+  "year": "1957"
+ },
+ {
+  "title": "Private Eye Popeye",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 393,
+  "url": "https://archive.org/download/popeye_private_eye_popeye/popeye_private_eye_popeye_512kb.mp4",
+  "year": "1954"
+ },
+ {
+  "title": "Shuteye Popeye",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 382,
+  "url": "https://archive.org/download/popeye_shuteye_popeye/popeye_shuteye_popeye_512kb.mp4",
+  "year": "1952"
+ },
+ {
+  "title": "Popeye: I Don't Scare",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 367,
+  "url": "https://archive.org/download/popeye_i_dont_scare/popeye_i_dont_scare_512kb.mp4",
+  "year": "1956"
+ },
+ {
+  "title": "Popeye: Taxi-Turvy",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 363,
+  "url": "https://archive.org/download/popeye_taxi-turvey/popeye_taxi-turvey_512kb.mp4",
+  "year": "1954"
+ },
+ {
+  "title": "Popeye: Fright To The Finish",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 381,
+  "url": "https://archive.org/download/popeye_fright_to_the_finish/popeye_fright_to_the_finish_512kb.mp4",
+  "year": "1954"
+ },
+ {
+  "title": "Popeye The Sailor Man: Ancient Fistory",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 407,
+  "url": "https://archive.org/download/popeye_the_sailor_ancient_fantasy/popeye_the_sailor_ancient_fantasy_512kb.mp4",
+  "year": "1952"
+ },
+ {
+  "title": "Popeye The Sailor: Big Bad Sinbad",
+  "channel": "03",
+  "net": "POPEYE",
+  "icon": "⚓️",
+  "duration": 303,
+  "url": "https://archive.org/download/popeye_big_bad_sinbad/popeye_big_bad_sinbad_512kb.mp4",
+  "year": "1952"
+ },
+ {
+  "title": "Betty Boop: Snow White",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 424,
+  "url": "https://archive.org/download/bb_snow_white/bb_snow_white_512kb.mp4",
+  "year": "1933"
+ },
+ {
+  "title": "Betty Boop: Minnie The Moocher",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 466,
+  "url": "https://archive.org/download/bb_minnie_the_moocher/bb_minnie_the_moocher_512kb.mp4",
+  "year": "1932"
+ },
+ {
+  "title": "Betty Boop And Grampy",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 419,
+  "url": "https://archive.org/download/bb_and_grampy/bb_and_grampy_512kb.mp4",
+  "year": "1935"
+ },
+ {
+  "title": "Betty Boop And The Little King",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 369,
+  "url": "https://archive.org/download/bb_and_the_little_king/bb_and_the_little_king_512kb.mp4",
+  "year": "1936"
+ },
+ {
+  "title": "Betty Boop: Be Human",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 389,
+  "url": "https://archive.org/download/bb_be_human/bb_be_human_512kb.mp4",
+  "year": "1936"
+ },
+ {
+  "title": "Betty Boop for President",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 390,
+  "url": "https://archive.org/download/Betty_Boop_for_President_1932/Betty_Boop_for_President_1932_512kb.mp4",
+  "year": "1932"
+ },
+ {
+  "title": "Betty Boop: Betty in Blunderland",
+  "channel": "04",
+  "net": "BOOP",
+  "icon": "💋",
+  "duration": 393,
+  "url": "https://archive.org/download/bb_betty_in_blunderland/bb_betty_in_blunderland_512kb.mp4",
+  "year": "1933"
+ },
+ {
+  "title": "Superman: The Mechanical Monsters",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 615,
+  "url": "https://archive.org/download/superman_the_mechanical_monsters/superman_the_mechanical_monsters_512kb.mp4",
+  "year": "1941"
+ },
+ {
+  "title": "Superman: Electric Earthquake",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 523,
+  "url": "https://archive.org/download/superman_electric_earthquake/superman_electric_earthquake_512kb.mp4",
+  "year": "1942"
+ },
+ {
+  "title": "Superman: Eleventh Hour",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 479,
+  "url": "https://archive.org/download/superman_eleventh_hour/superman_eleventh_hour_512kb.mp4",
+  "year": "1942"
+ },
+ {
+  "title": "Mighty Mouse: Wolf! Wolf!",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 372,
+  "url": "https://archive.org/download/mighty_mouse_wolf_wolf/mighty_mouse_wolf_wolf_512kb.mp4"
+ },
+ {
+  "title": "Felix the Cat: The Goose That Laid the Golden Egg",
+  "channel": "09",
+  "net": "FUNNIES",
+  "icon": "🐱",
+  "duration": 429,
+  "url": "https://archive.org/download/felix_the_cat_the_goos_that_laid_the_golden_egg/felix_the_cat_the_goos_that_laid_the_golden_egg_512kb.mp4",
+  "year": "1936"
+ },
+ {
+  "title": "Woody Woodpecker in Pantry Panic",
+  "channel": "09",
+  "net": "FUNNIES",
+  "icon": "🐱",
+  "duration": 412,
+  "url": "https://archive.org/download/woody_woodpecker_pantry_panic/woody_woodpecker_pantry_panic_512kb.mp4",
+  "year": "1941"
+ },
+ {
+  "title": "Little Lulu: Bargain Counter Attack",
+  "channel": "09",
+  "net": "FUNNIES",
+  "icon": "🐱",
+  "duration": 454,
+  "url": "https://archive.org/download/little_lulu_bargain_counter_attack/little_lulu_bargain_counter_attack_512kb.mp4",
+  "year": "1946"
+ },
+ {
+  "title": "Superman: The Mad Scientist",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 613,
+  "url": "https://archive.org/download/superman_the_mad_scientist/Superman-01-The_Mad_Scientist_512kb.mp4",
+  "year": "1941"
+ },
+ {
+  "title": "Superman: The Magnetic Telescope",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 460,
+  "url": "https://archive.org/download/Superman_The_Magnetic_Telescope/Superman_The_Magnetic_Telescope_512kb.mp4",
+  "year": "1942"
+ },
+ {
+  "title": "Superman: Terror on the Midway",
+  "channel": "06",
+  "net": "HEROES",
+  "icon": "🦸",
+  "duration": 481,
+  "url": "https://archive.org/download/superman_terror_on_the_midway/Superman-09-Terror_on_the_Midway_512kb.mp4",
+  "year": "1942"
+ },
+ {
+  "title": "A Corny Concerto",
+  "channel": "07",
+  "net": "LOONEY",
+  "icon": "🐰",
+  "duration": 478,
+  "url": "https://archive.org/download/ACornyConcerto1943BugsBunny/ACornyConcerto1943BugsBunnyDaffyDuckElmerFudd-m735o_eewgg.mp4",
+  "year": "1943"
+ },
+ {
+  "title": "Case of the Missing Hare",
+  "channel": "07",
+  "net": "LOONEY",
+  "icon": "🐰",
+  "duration": 494,
+  "url": "https://archive.org/download/BugsBunnyCaseOfTheMissingHare/Merrie%20Melodies%20-%20Bugs%20Bunny%20-%20Case%20Of%20The%20Missing%20Hare%20%281942%29-dyQ4EntAyhc.mp4",
+  "year": "1942"
+ },
+ {
+  "title": "Daffy Duck & Egghead",
+  "channel": "07",
+  "net": "LOONEY",
+  "icon": "🐰",
+  "duration": 455,
+  "url": "https://archive.org/download/19380101-daffy-duck-and-egghead-mm-daffy-duck-eggh/19380101_Daffy_Duck_And_Egghead_MM_Daffy_Duck_Eggh.mp4",
+  "year": "1938"
+ },
+ {
+  "title": "Daffy Duck and the Dinosaur",
+  "channel": "07",
+  "net": "LOONEY",
+  "icon": "🐰",
+  "duration": 472,
+  "url": "https://archive.org/download/DaffyDuckAndTheDinosaur1939CfVna0EAL8/Daffy%20Duck%20and%20the%20Dinosaur%20%281939%29-cfVna0EA_L8.mp4",
+  "year": "1939"
+ },
+ {
+  "title": "Confusions of a Nutzy Spy",
+  "channel": "07",
+  "net": "LOONEY",
+  "icon": "🐰",
+  "duration": 453,
+  "url": "https://archive.org/download/ConfusionsOfANutzySpy1943/Confusions%20of%20a%20Nutzy%20Spy%20%281943%29-b0uVtS7nrCA.mp4",
+  "year": "1943"
+ },
+ {
+  "title": "Beauty and the Beast",
+  "channel": "07",
+  "net": "LOONEY",
+  "icon": "🐰",
+  "duration": 457,
+  "url": "https://archive.org/download/MerrieMelodiesBeautyAndTheBeast41434/S1934E06%20Beauty%20And%20The%20Beast.mp4",
+  "year": "1934"
+ },
+ {
+  "title": "Flip the Frog: Fiddlesticks",
+  "channel": "09",
+  "net": "FUNNIES",
+  "icon": "🐱",
+  "duration": 372,
+  "url": "https://archive.org/download/FLIP_FROG-FIDDLESTICKS/FLIP_FROG-FIDDLESTICKS_64k.mp4",
+  "year": "1930"
+ },
+ {
+  "title": "Flip the Frog: Soda Squirt",
+  "channel": "09",
+  "net": "FUNNIES",
+  "icon": "🐱",
+  "duration": 364,
+  "url": "https://archive.org/download/FlipTheFrog-SodaSquirt1933/FlipTheFrog-SodaSquirt.mp4",
+  "year": "1933"
+ },
+ {
+  "title": "Flip the Frog: Little Orphan Willie",
+  "channel": "09",
+  "net": "FUNNIES",
+  "icon": "🐱",
+  "duration": 357,
+  "url": "https://archive.org/download/LittleOrphanWillie1930FlipTheFrogSoundCartoon/Little%20Orphan%20Willie%201930%20Flip%20The%20Frog%20Sound%20Cartoon.mp4",
+  "year": "1930"
+ },
+ {
+  "title": "Tom and Jerry: Jolly Fish",
+  "channel": "10",
+  "net": "OLDIES",
+  "icon": "🎞️",
+  "duration": 310,
+  "url": "https://archive.org/download/Jolly_Fish_1932/Tom_and_Jerry_Jolly_Fish_1932_512kb.mp4",
+  "year": "1932"
+ },
+ {
+  "title": "Tom and Jerry: Barnyard Bunk",
+  "channel": "10",
+  "net": "OLDIES",
+  "icon": "🎞️",
+  "duration": 340,
+  "url": "https://archive.org/download/Barnyard_Bunk_1932/Tom_and_Jerry_Barnyard_Bunk_1932_512kb.mp4",
+  "year": "1932"
+ },
+ {
+  "title": "Tom and Jerry: The Tuba Tooter",
+  "channel": "10",
+  "net": "OLDIES",
+  "icon": "🎞️",
+  "duration": 403,
+  "url": "https://archive.org/download/The_Tuba_Tooter_1932/Tom_and_Jerry_The_Tuba_Tooter_1932_512kb.mp4",
+  "year": "1932"
+ },
+ {
+  "title": "Tom and Jerry in A Spanish Twist",
+  "channel": "10",
+  "net": "OLDIES",
+  "icon": "🎞️",
+  "duration": 354,
+  "url": "https://archive.org/download/TomAndJerryInASpanishTwist/RareLostCartoonsAndKidsShows-VanBeuren-TomJerry-ASpanishTwistdvdRip1932.mp4"
+ },
+ {
+  "title": "Tom and Jerry: Piano Tooners",
+  "channel": "10",
+  "net": "OLDIES",
+  "icon": "🎞️",
+  "duration": 437,
+  "url": "https://archive.org/download/cco_TomandJerryPianoTooners/TomJerry_Piano_Tooners_512kb.mp4"
+ }
+]
